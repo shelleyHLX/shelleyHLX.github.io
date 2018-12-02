@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>Hierarchical Attention Networks for Document Classification</title>
+    <meta name="description" content="  Abstract  1 Introduction  Hierarchical Attention NetworksAbstract提出具有层次级的注意力网络进行文本分类，模型有两个重要特点：1 层次级结构表示文本的层级结构2 应用在词级和句子级的注意力机制，在构造文本表示时可以捕获不同的内容。1 Introd...">
+
+    <link rel="shortcut icon" href="/favicon.ico?" type="image/x-icon">
+    <link rel="icon" href="/favicon.ico?" type="image/x-icon">
+    <link rel="stylesheet" href=" /css/fontawesome/css/font-awesome.min.css ">
+    <link rel="stylesheet" href=" /css/main.css ">
+    <link href="/css/github-v2.min.css" type="text/css" rel="stylesheet" />
+    <link rel="canonical" href="http://localhost:4000/2018/12/02/Hierarchical-Attention-Networks-for-Document-Classification/">
+    <link rel="alternate" type="application/rss+xml" title="shelleyHLX" href="http://localhost:4000 /feed.xml ">
+
+
+
+</head>
+
+
+  <body>
+
+    <header id="top">
+    <div class="wrapper">
+        <a href="/" class="brand">shelleyHLX</a>
+        <small>coder</small>
+        <button id="headerMenu" class="menu"><i class="fa fa-bars"></i></button>
+        <nav id="headerNav">
+            <ul>
+                <li>
+                    
+                    <a href="/">
+                    
+                        <i class="fa fa-home"></i>Home
+                    </a>
+                </li>
+
+                
+                    
+                    <li>
+                        
+                        <a href="/archive/">
+                        
+                            <i class="fa fa-archive"></i>Archives
+                        </a>
+                    </li>
+                    
+                
+                    
+                    <li>
+                        
+                        <a href="/category/">
+                        
+                            <i class="fa fa-th-list"></i>Categories
+                        </a>
+                    </li>
+                    
+                
+                    
+                    <li>
+                        
+                        <a href="/tag/">
+                        
+                            <i class="fa fa-tags"></i>Tags
+                        </a>
+                    </li>
+                    
+                
+                    
+                    <li>
+                        
+                        <a href="/about/">
+                        
+                            <i class="fa fa-heart"></i>About
+                        </a>
+                    </li>
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+            </ul>
+        </nav>
+    </div>
+</header>
+
+
+        <div class="page clearfix" post>
+    <div class="left">
+        <h1>Hierarchical Attention Networks for Document Classification</h1>
+        <div class="label">
+
+            <div class="label-card">
+                <i class="fa fa-calendar"></i>2018-12-02
+            </div>
+
+            <div class="label-card">
+                
+            </div>
+
+            <div class="label-card">
+                
+            </div>
+
+            <div class="label-card">
+            
+
+
+<!-- <span class="point">•</span> -->
+<span class="categories">
+  <i class="fa fa-th-list"></i>
+  
+    
+        <a href="/category/#Text" title="Category: Text" rel="category">Text</a>&nbsp;
+    
+        <a href="/category/#Classification" title="Category: Classification" rel="category">Classification</a>
+    
+  
+
+  <!-- <span class="point">•</span> -->
+</span>
+
+
+            </div>
+
+            <div class="label-card">
+            
+<!-- <span class="point">•</span> -->
+<span class="pageTag">
+  <i class="fa fa-tags"></i>
+  
+    
+        <!--a href="/tag/#HAN" title="Tag: HAN" rel="tag">HAN</a-->
+        <a href="/tag/#HAN" title="Tag: HAN" rel="tag">HAN</a>
+    
+  
+
+</span>
+
+            </div>
+
+        </div>
+        <hr>
+        <article itemscope itemtype="http://schema.org/BlogPosting">
+        <ul id="markdown-toc">
+  <li><a href="#abstract" id="markdown-toc-abstract">Abstract</a></li>
+  <li><a href="#1-introduction" id="markdown-toc-1-introduction">1 Introduction</a></li>
+  <li><a href="#hierarchical-attention-networks" id="markdown-toc-hierarchical-attention-networks">Hierarchical Attention Networks</a></li>
+</ul>
+
+<h2 id="abstract">Abstract</h2>
+<p>提出具有层次级的注意力网络进行文本分类，模型有两个重要特点：</p>
+
+<p>1 层次级结构表示文本的层级结构
+2 应用在词级和句子级的注意力机制，在构造文本表示时可以捕获不同的内容。</p>
+
+<h2 id="1-introduction">1 Introduction</h2>
+<p>文本分类是自然语言处理的任务之一，目标是给文本贴标签，有广泛的应用，比如话题打标签，情感分类，垃圾检测。表示文本的传统方法是使用稀疏的词法特征，比如n-gram，然后在这个表示上使用线性模型或是核方法。现在更多的是使用深度学习，比如CNN，RNN，LSTM，进行文本表示的学习。</p>
+
+<p><img src="http://shelleyHLX.github.io/assets/text_classification/han_1.png" alt="image" />
+<img src="http://shelleyHLX.github.io/assets/text_classification/han_1.png" /></p>
+
+<p>虽然基于网络的方法很有效，本文提出的假设在模型架构中的文档结构的知识可以获得更好的表示，灵感源于不是文档的每部分对于分类都有用，而且决定相关部分涉及到词语之间的交互，不仅仅他们孤立的出现。</p>
+
+<p>我们的贡献是提出新的网络，层次级的注意力网络，可以捕获文档的两级特征。</p>
+
+<p>首先，文档有两级特征（词到句子，句子到文档），所以先构造句子的表示再把他们变成文档的表示。</p>
+
+<p>第二，不同的词语和句子在文档中有不同的信息。而且重要的词和句子是文本信息独立的，比如相同的单词或是句子在不同的文本中有不同的信息。</p>
+
+<p>我们的模型包含两层的注意力机制，一个是单词级，一个是句子级，这让模型对于单个词有不同的敏感度。 比如figure 1的单词中，delicious，amazing有更强的信息，对于评论有积极的影响。</p>
+
+<p>注意力有两个好处，有更好的性能外，而且考虑了词和句子对于分类决定的贡献。</p>
+
+<h2 id="hierarchical-attention-networks">Hierarchical Attention Networks</h2>
+<p>整个模型包括几部分：</p>
+
+<p>词序列的编码器，词级的注意力层，句子的编码器，句子级的注意力层。</p>
+
+<p><img src="http://shelleyHLX.github.io/assets/TextClassification/han_2.png" alt="image" /></p>
+
+<p>其中\(t_k\)和\(s_l\)是特征函数，\(\lambda_k\)和\(\mu_l\)是对应的权值。求和是在所有可能的输出序列上进行的。\(t_k\)是转移特征，依赖于前一个位置和当前位置。\(s_l\)是状态特征，依赖于当前位置。通常特征函数\(t_k\)和\(s_l\)定义为1或0，满足特征取1，不满足则取0. 条件随机场完全由特征函数\(t_k\)，\(s_l\)和对应的权值\(\lambda_k\)，\(\mu_l\)确定。</p>
+
+<script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=default"></script>
+
+
+        </article>
+        <hr>
+
+        <!--
+        
+        
+        
+        -->
+
+        <div class="post-recent">
+    <div class="pre">
+        
+    </div>
+    <div class="nex">
+
+        
+    </div>
+</div>
+
+
+        <!--<h2 id="comments">评论</h2>
+        
+
+
+
+        -->
+        <!-- mathjax -->
+           
+
+
+    </div>
+    <button class="anchor"><i class="fa fa-anchor"></i></button>
+    <div class="right">
+        <div class="wrap">
+
+            <!-- Content -->
+            <div class="side content">
+                <div>
+                    Content
+                </div>
+                <ul id="content-side" class="content-ul">
+                    <!--
+                    <li><a href="#similar_posts">相关文章</a></li>
+                    <li><a href="#comments">评论</a></li>
+                    -->
+                </ul>
+            </div>
+            <!-- 其他div框放到这里 -->
+            <!-- <div class="side">bbbb</div> -->
+        </div>
+    </div>
+</div>
+<script>
+/**
+ * target _blank
+ */
+(function() {
+    var aTags = document.querySelectorAll('article a:not([id])')
+    for (var i = 0; i < aTags.length; i++) {
+        aTags[i].setAttribute('target', '_blank')
+    }
+}());
+</script>
+<script src="/js/pageContent.js " charset="utf-8"></script>
+
+
+    <footer class="site-footer">
+
+
+    <div class="wrapper">
+
+        <!-- <p class="description">
+             
+             </p> -->
+        <p class="contact">
+            
+            <a href="https://github.com/shelleyHLX" title="GitHub"><i class="fa fa-github" aria-hidden="true"></i></a>
+            
+            
+            <a href="mailto:luanxin_huang@qq.com" title="email"><i class="fa fa-envelope-o" aria-hidden="true"></i></a>
+            
+            
+            
+            
+            
+            
+            
+            
+        </p>
+        <p class="power">
+            <span>
+                Site powered by <a href="https://jekyllrb.com/">Jekyll</a> & <a href="https://pages.github.com/">Github Pages</a>.
+            </span>
+        </p>
+        <p class="power">
+            <span>
+                Copyright &copy; 2015-<script language="javascript" type="text/javascript">
+                 var today = new Date()
+                 var year = today.getFullYear()
+                 document.write(year)
+                </script> shelleyHLX. All Rights Reserved.
+            </span>
+        </p>
+    </div>
+</footer>
+
+    <div class="back-to-top">
+    <a href="#top" class="scroll">
+        <i class="fa fa-arrow-up" aria-hidden="true"></i>
+    </a>
+</div>
+
+    <script src=" /js/main.js " charset="utf-8"></script>
+    <script src=" /js/scroll.min.js " charset="utf-8"></script>
+    <script type="text/javascript" src="/js/code/prettify.js"></script>
+    <script type="text/javascript" src="/js/jquery-1.8.0.min.js"></script>
+    <script type="text/javascript">
+      $(function(){
+        $("pre").addClass("prettyprint linenums");
+        prettyPrint();
+        $('.entry a').each(function(){
+          if($(this).attr("href").indexOf("vsooda") == -1){
+            $(this).attr("target", "_blank");
+          }
+        })
+      });
+    </script>
+  </body>
+
+</html>

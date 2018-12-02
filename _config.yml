@@ -1,0 +1,46 @@
+# Welcome to Jekyll!
+#
+# This config file is meant for settings that affect your whole blog, values
+# which you are expected to set up once and rarely need to edit after that.
+# For technical reasons, this file is *NOT* reloaded automatically when you use
+# 'jekyll serve'. If you change this file, please restart the server process.
+
+# Site settings
+title: shelleyHLX
+brief-intro: coder
+email: luanxin_huang@qq.com
+description: > # this means to ignore newlines until "baseurl:"
+  关注计算机视觉，自然语言处理，语音识别。
+baseurl: "" # the subpath of your site, e.g. /blog
+url: "" # the base hostname & protocol for your site
+#twitter_username: vsooda
+github_username:  shelleyHLX
+
+
+permalink: /:year/:month/:day/:title/
+
+
+# Build settings
+markdown: kramdown
+highlighter: rouge
+#markdown: rdiscount #对mou的支持较好
+#markdown: redcarpet
+#redcarpet:
+#    extensions: ["tables"]
+#markdown: kramdown
+kramdown:
+    input: GFM
+    auto_ids: true
+    syntax_highlighter: rouge
+
+
+#permalink: pretty
+excerpt_separator: "\n\n\n"
+
+category_dir: category/
+tag_dir: tag/
+
+gems: [jekyll-paginate]
+paginate: 10
+
+#find . -name "*.markdown" | xargs -i sed -i "s/\\\_/_/g" {}
