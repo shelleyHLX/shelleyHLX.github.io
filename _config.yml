@@ -44,3 +44,5 @@ gems: [jekyll-paginate]
 paginate: 10
 
 #find . -name "*.markdown" | xargs -i sed -i "s/\\\_/_/g" {}
+
+theme: jekyll-theme-cayman
