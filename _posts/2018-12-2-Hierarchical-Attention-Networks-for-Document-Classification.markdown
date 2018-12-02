@@ -17,8 +17,8 @@ tags: HAN
 ## 1 Introduction
 文本分类是自然语言处理的任务之一，目标是给文本贴标签，有广泛的应用，比如话题打标签，情感分类，垃圾检测。表示文本的传统方法是使用稀疏的词法特征，比如n-gram，然后在这个表示上使用线性模型或是核方法。现在更多的是使用深度学习，比如CNN，RNN，LSTM，进行文本表示的学习。
 
-![image](http://shelleyHLX.github.io/assets/text_classification/han_1.png)
-<img src="http://shelleyHLX.github.io/assets/text_classification/han_1.png">
+![image](http://shelleyHLX.github.io/assets/TextClassification/han_1.png)
+<img src="http://shelleyHLX.github.io/assets/TextClassification/han_1.png">
 
 虽然基于网络的方法很有效，本文提出的假设在模型架构中的文档结构的知识可以获得更好的表示，灵感源于不是文档的每部分对于分类都有用，而且决定相关部分涉及到词语之间的交互，不仅仅他们孤立的出现。
 
